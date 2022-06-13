@@ -608,6 +608,7 @@ class HouseCard extends StatefulWidget {
   State<HouseCard> createState() => _HouseCardState();
 }
 
+//https://dribbble.com/shots/18300406-Affitto-Real-Estate-App
 class _HouseCardState extends State<HouseCard> {
   @override
   Widget build(BuildContext context) {
