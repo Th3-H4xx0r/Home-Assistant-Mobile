@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "936139412283",
+    "project_id": "home-assistant-bdec1",
+    "storage_bucket": "home-assistant-bdec1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936139412283:android:501fc2601c898984941d1e",
+        "android_client_info": {
+          "package_name": "com.pranav.home_assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936139412283-h3q4hh6hsrepqmr27bo07pd7n73v88fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvX8e_Q7qBxLSg5eG7CDeR7ML4OObTRwU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936139412283-h3q4hh6hsrepqmr27bo07pd7n73v88fa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
