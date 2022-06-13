@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -452,6 +453,114 @@ class _HousesState extends State<Houses> {
         });
   }
 
+  Future showHouseQuickOptions(houseCode, context) async{
+    print("SHOW MODAL");
+
+    showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Color.fromRGBO(33, 35, 41, 1)),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            children: [
+
+                              Container(
+                                margin: const EdgeInsets.only(top: 10),
+                                height: 5,
+                                width:
+                                MediaQuery.of(context).size.width * 0.3,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(2)),
+                              ),
+
+                              Container(
+                                margin: EdgeInsets.only(top: 20, bottom: 10),
+                                child: Text("Quick Options", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                              ),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+
+                                  GestureDetector(
+                                    onTap: (){
+
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 20, bottom: 20),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(30),
+                                                color: Colors.grey[900],
+                                                border: Border.all(color: Colors.white, width: 1)
+                                            ),
+                                            margin: EdgeInsets.only(),
+                                            child: Icon(Icons.list, color: Colors.white,),
+                                          ),
+
+                                          Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: Text("Shopping\nList", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  GestureDetector(
+                                    onTap: (){
+
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 20, bottom: 20, left: 30),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(30),
+                                                color: Colors.grey[900],
+                                                border: Border.all(color: Colors.white, width: 1)
+                                            ),
+                                            margin: EdgeInsets.only(),
+                                            child: Icon(CupertinoIcons.archivebox, color: Colors.white,),
+                                          ),
+
+                                          Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: Text("Inventory\n", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+
+
+                                ],
+                              ),
+
+
+                            ],
+                          ),
+                        )));
+              });
+        });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -525,8 +634,9 @@ class _HousesState extends State<Houses> {
                                   var data = housesDetails[index];
                                   print(data);
                                   var houseName = data['houseName'];
+                                  var houseCode = data['houseCode'];
 
-                                  return HouseCard(houseName);
+                                  return HouseCard(houseName, houseCode);
                                 },
                               ),
                             ))
@@ -547,6 +657,7 @@ class _HousesState extends State<Houses> {
                                   width: MediaQuery.of(context).size.width * 0.6,
                                 ),
                               ),
+
                               Container(
                                 child: const Text(
                                   "No Houses Here",
@@ -556,6 +667,7 @@ class _HousesState extends State<Houses> {
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
+
                               Container(
                                 margin: const EdgeInsets.only(top: 5, bottom: 15),
                                 child: const Text(
@@ -599,9 +711,11 @@ class _HousesState extends State<Houses> {
 
 class HouseCard extends StatefulWidget {
   var houseName = 'Mountain House';
+  var houseCode = '';
 
-  HouseCard(house) {
+  HouseCard(house, code) {
     houseName = house;
+    houseCode = code.toString();
   }
 
   @override
@@ -625,17 +739,45 @@ class _HouseCardState extends State<HouseCard> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 30, left: 30),
-            width: MediaQuery.of(context).size.width * 0.3,
-            child: Text(
-              widget.houseName,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold),
-            ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+
+              Container(
+                margin: const EdgeInsets.only(top: 30, left: 30),
+                width: MediaQuery.of(context).size.width * 0.3,
+                child: Text(
+                  widget.houseName,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              Container(
+                height: 60,
+                width: 60,
+                margin: const EdgeInsets.only(right: 10),
+                child: FlatButton(
+                  color: Colors.white.withOpacity(0.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(70),
+                  ),
+                  onPressed: () {},
+                  child: Container(
+                      margin: const EdgeInsets.only(
+                          left: 0, right: 0, top: 0, bottom: 0),
+                      child: const Icon(
+                        Icons.cancel_presentation,
+                        color: Colors.white,
+                      )),
+                ),
+              ),
+            ],
           ),
+
           Container(
             margin: const EdgeInsets.only(left: 20, bottom: 20),
             child: Row(
@@ -669,12 +811,14 @@ class _HouseCardState extends State<HouseCard> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(70),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _HousesState().showHouseQuickOptions(widget.houseCode.toString(), context);
+                    },
                     child: Container(
                         margin: const EdgeInsets.only(
                             left: 0, right: 0, top: 0, bottom: 0),
                         child: const Icon(
-                          Icons.cancel_presentation,
+                          Icons.keyboard_arrow_down_rounded,
                           color: Colors.white,
                         )),
                   ),
