@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,9 +28,13 @@ class _HousesState extends State<Houses> {
   var errorMessageCreateHouse = '';
   var housesDetails = [];
   var loadingHouses = true;
+  var joinHouseLoading = false;
+  var errorMessageJoinHouse = "";
 
   // Text editing controllers
   var houseNameController = TextEditingController();
+  var houseCodeJoinController = TextEditingController();
+  var nameController = TextEditingController();
 
   Future getHouses() async {
     loadingHouses = true;
@@ -54,8 +59,14 @@ class _HousesState extends State<Houses> {
     if(houses.isEmpty){
       loadingHouses = false;
     }
-    print(items);
-    setState(() {});
+    print(items.toString() + "|||");
+
+    try{
+      setState(() {});
+    } catch(e){
+      print("ERRRRRROR \\\\");
+      print(e);
+    }
   }
 
   void updateListRefresh(original, index) {
@@ -80,6 +91,38 @@ class _HousesState extends State<Houses> {
         : currentList.add(randomNumber);
     print(currentList);
     prefs.setStringList('Houses', currentList);
+  }
+
+  Future leaveHouseLocalList(randomNumber) async {
+    randomNumber = randomNumber.toString();
+    final prefs = await SharedPreferences.getInstance();
+    var currentList = prefs.getStringList('Houses') ?? [];
+    if(currentList != null){
+      if(currentList.contains(randomNumber)){
+        currentList.remove(randomNumber);
+      }
+    }
+    prefs.setStringList('Houses', currentList);
+    print(currentList);
+  }
+
+  Future leaveHouseConfirmation(houseCode, context) async {
+    AwesomeDialog(
+        context: context,
+        dialogType: DialogType.QUESTION,
+        animType: AnimType.BOTTOMSLIDE,
+        dialogBackgroundColor: Colors.white.withOpacity(0.2),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
+        descTextStyle: const TextStyle(color: Colors.white),
+        title: 'Leave House?',
+        desc: 'Are you sure you want to leave this house?',
+        btnCancelOnPress: () {},
+        btnOkOnPress: () {
+          leaveHouseLocalList(houseCode).then((value){
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Houses()));
+          });
+        }
+    ).show();
   }
 
   Future showHouseCreationModal() async {
@@ -184,7 +227,11 @@ class _HousesState extends State<Houses> {
                                               BorderRadius.circular(30.0),
                                         ),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        showCreateHouseModalFragment = false;
+                                        showJoinHouseModalFragment = true;
+                                        setState(() {});
+                                      },
                                       child: Container(
                                           margin: const EdgeInsets.only(
                                               left: 30,
@@ -450,7 +497,191 @@ class _HousesState extends State<Houses> {
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                  ]))
+                                  ])),
+
+                          // Join House Fragment
+                          Visibility(
+                            visible: showJoinHouseModalFragment,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  height: 5,
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(2)),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 30, bottom: 10),
+                                  child: const Text(
+                                    "Join House",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.8,
+                                  margin:
+                                  const EdgeInsets.only(top: 5, bottom: 15),
+                                  child: const Text(
+                                    "Join a existing house with a house code",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 15),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.85,
+                                  margin: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.only(top: 20),
+                                  decoration: BoxDecoration(
+                                      color:
+                                      const Color.fromRGBO(50, 50, 55, 1),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  height: 45,
+                                  child: TextField(
+                                    style: const TextStyle(color: Colors.white),
+                                    controller: houseCodeJoinController,
+                                    decoration: InputDecoration(
+                                        hintText: "House Code",
+                                        hintStyle: const TextStyle(color: Colors.grey),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                        )),
+                                  ),
+                                ),
+
+                                Container(
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.85,
+                                  margin: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.only(top: 20),
+                                  decoration: BoxDecoration(
+                                      color:
+                                      const Color.fromRGBO(50, 50, 55, 1),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  height: 45,
+                                  child: TextField(
+                                    controller: nameController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        hintText: "Full Name",
+                                        hintStyle: const TextStyle(color: Colors.grey),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                        )),
+                                  ),
+                                ),
+
+                                // Error Message
+                                Container(
+                                  child: Text(
+                                    errorMessageJoinHouse,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                ),
+
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 15, bottom: 20),
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.85,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.blue.shade700,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        joinHouseLoading = true;
+                                        setState(() {});
+
+                                        // Login firebase
+
+                                        await firebaseLogin().then((value) {
+                                          if (houseCodeJoinController.text != '' && nameController.text != "") {
+                                            try {
+                                              // Checks if house code does not already exist
+                                              FirebaseFirestore.instance
+                                                  .collection('Houses')
+                                                  .doc(houseCodeJoinController.text)
+                                                  .get()
+                                                  .then((value) {
+                                                var data = value.data();
+                                                print(data);
+
+                                                if (data == null) {
+                                                  // House Doesn't exist
+                                                  joinHouseLoading = false;
+                                                  errorMessageJoinHouse = "Code is invalid";
+                                                  setState((){});
+                                                } else {
+                                                  // House does exist and join
+
+                                                  FirebaseFirestore.instance.collection("Houses").doc(houseCodeJoinController.text).collection("Family").doc().set({
+                                                    "name": nameController.text
+                                                  });
+
+                                                  updateLocalList(houseCodeJoinController.text);
+
+                                                  joinHouseLoading = false;
+                                                  setState((){});
+                                                  Navigator.push(context, CupertinoPageRoute(builder: (context) => Houses()));
+
+                                                }
+                                              });
+                                            } catch (e) {
+                                              errorMessageJoinHouse =
+                                                  e.toString();
+                                              joinHouseLoading = false;
+                                              setState(() {});
+                                            }
+                                          } else {
+                                            joinHouseLoading = false;
+                                            errorMessageJoinHouse =
+                                            "Cannot be empty";
+                                            setState(() {});
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 30,
+                                              right: 30,
+                                              top: 15,
+                                              bottom: 15),
+                                          child: joinHouseLoading == false
+                                              ? const Text("Join House")
+                                              : const SizedBox(
+                                            height: 18,
+                                            child: SpinKitRing(
+                                              lineWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     )));
@@ -487,7 +718,7 @@ class _HousesState extends State<Houses> {
                               ),
 
                               Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 10),
+                                margin: const EdgeInsets.only(top: 20, bottom: 10),
                                 child: const Text("Quick Options", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
                               ),
 
@@ -699,9 +930,7 @@ class _HousesState extends State<Houses> {
                           ),
                         ))
                   ],
-                )
-
-
+                ),
           ],
         ),
       ),
@@ -765,7 +994,9 @@ class _HouseCardState extends State<HouseCard> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(70),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    _HousesState().leaveHouseConfirmation(widget.houseCode, context);
+                  },
                   child: Container(
                       margin: const EdgeInsets.only(
                           left: 0, right: 0, top: 0, bottom: 0),
