@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:home_assistant/ShoppingList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 
@@ -49,6 +50,10 @@ class _HousesState extends State<Houses> {
       });
       print(housesDetails);
     });
+
+    if(houses.isEmpty){
+      loadingHouses = false;
+    }
     print(items);
     setState(() {});
   }
@@ -465,7 +470,7 @@ class _HousesState extends State<Houses> {
                 return Padding(
                     padding: MediaQuery.of(context).viewInsets,
                     child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             color: Color.fromRGBO(33, 35, 41, 1)),
                         child: IntrinsicHeight(
                           child: Column(
@@ -483,7 +488,7 @@ class _HousesState extends State<Houses> {
 
                               Container(
                                 margin: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Text("Quick Options", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                                child: const Text("Quick Options", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
                               ),
 
                               Row(
@@ -492,10 +497,10 @@ class _HousesState extends State<Houses> {
 
                                   GestureDetector(
                                     onTap: (){
-
+                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ShoppingList(houseCode)));
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.only(top: 20, bottom: 20),
+                                      margin: const EdgeInsets.only(top: 20, bottom: 20),
                                       child: Column(
                                         children: [
                                           Container(
@@ -506,13 +511,13 @@ class _HousesState extends State<Houses> {
                                                 color: Colors.grey[900],
                                                 border: Border.all(color: Colors.white, width: 1)
                                             ),
-                                            margin: EdgeInsets.only(),
-                                            child: Icon(Icons.list, color: Colors.white,),
+                                            margin: const EdgeInsets.only(),
+                                            child: const Icon(Icons.list, color: Colors.white,),
                                           ),
 
                                           Container(
-                                            margin: EdgeInsets.only(top: 5),
-                                            child: Text("Shopping\nList", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                                            margin: const EdgeInsets.only(top: 5),
+                                            child: const Text("Shopping\nList", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
                                           ),
                                         ],
                                       ),
@@ -524,7 +529,7 @@ class _HousesState extends State<Houses> {
 
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.only(top: 20, bottom: 20, left: 30),
+                                      margin: const EdgeInsets.only(top: 20, bottom: 20, left: 30),
                                       child: Column(
                                         children: [
                                           Container(
@@ -535,25 +540,20 @@ class _HousesState extends State<Houses> {
                                                 color: Colors.grey[900],
                                                 border: Border.all(color: Colors.white, width: 1)
                                             ),
-                                            margin: EdgeInsets.only(),
-                                            child: Icon(CupertinoIcons.archivebox, color: Colors.white,),
+                                            margin: const EdgeInsets.only(),
+                                            child: const Icon(CupertinoIcons.archivebox, color: Colors.white,),
                                           ),
 
                                           Container(
-                                            margin: EdgeInsets.only(top: 5),
-                                            child: Text("Inventory\n", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                                            margin: const EdgeInsets.only(top: 5),
+                                            child: const Text("Inventory\n", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
                                           ),
                                         ],
                                       ),
                                     ),
                                   ),
-
-
-
                                 ],
                               ),
-
-
                             ],
                           ),
                         )));
@@ -600,7 +600,7 @@ class _HousesState extends State<Houses> {
                     onTap: (){
                       showHouseCreationModal();
                     },
-                    child: Icon(Icons.add, color: Colors.white,),
+                    child: const Icon(Icons.add, color: Colors.white,),
                   ),
                 ),
               ],
@@ -609,7 +609,7 @@ class _HousesState extends State<Houses> {
             loadingHouses == true ? Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.35),
-              child: Center(
+              child: const Center(
                 child: SpinKitRing(
                   color: Colors.white,
                   lineWidth: 2,
