@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:home_assistant/Dashboard.dart';
 import 'package:home_assistant/ShoppingList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
@@ -91,6 +93,16 @@ class _HousesState extends State<Houses> {
         : currentList.add(randomNumber);
     print(currentList);
     prefs.setStringList('Houses', currentList);
+  }
+
+  Future checkHouseJoined(houseID) async {
+    var returnVal = false;
+    final prefs = await SharedPreferences.getInstance();
+    var currentList = prefs.getStringList('Houses') ?? [];
+      if(currentList.contains(houseID)){
+        returnVal = true;
+      }
+      return returnVal;
   }
 
   Future leaveHouseLocalList(randomNumber) async {
@@ -300,8 +312,10 @@ class _HousesState extends State<Houses> {
                                   height: 45,
                                   child: TextField(
                                     controller: houseNameController,
+                                    style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                         hintText: "House Name",
+                                        hintStyle: const TextStyle(color: Colors.grey),
                                         border: OutlineInputBorder(
                                           borderSide: BorderSide.none,
                                           borderRadius:
@@ -615,38 +629,50 @@ class _HousesState extends State<Houses> {
 
                                         // Login firebase
 
-                                        await firebaseLogin().then((value) {
+                                        await firebaseLogin().then((value) async {
                                           if (houseCodeJoinController.text != '' && nameController.text != "") {
                                             try {
-                                              // Checks if house code does not already exist
-                                              FirebaseFirestore.instance
-                                                  .collection('Houses')
-                                                  .doc(houseCodeJoinController.text)
-                                                  .get()
-                                                  .then((value) {
-                                                var data = value.data();
-                                                print(data);
+                                              // Checks if house already joined
+                                              var checkJoined = await checkHouseJoined(houseCodeJoinController.text);
+                                              print(checkJoined);
 
-                                                if (data == null) {
-                                                  // House Doesn't exist
-                                                  joinHouseLoading = false;
-                                                  errorMessageJoinHouse = "Code is invalid";
-                                                  setState((){});
-                                                } else {
-                                                  // House does exist and join
+                                              if(!checkJoined){
+                                                // Checks if house code does not already exist
+                                                FirebaseFirestore.instance
+                                                    .collection('Houses')
+                                                    .doc(houseCodeJoinController.text)
+                                                    .get()
+                                                    .then((value) {
+                                                  var data = value.data();
+                                                  print(data);
 
-                                                  FirebaseFirestore.instance.collection("Houses").doc(houseCodeJoinController.text).collection("Family").doc().set({
-                                                    "name": nameController.text
-                                                  });
+                                                  if (data == null) {
+                                                    // House Doesn't exist
+                                                    joinHouseLoading = false;
+                                                    errorMessageJoinHouse = "Code is invalid";
+                                                    setState((){});
+                                                  } else {
+                                                    // House does exist and join
 
-                                                  updateLocalList(houseCodeJoinController.text);
+                                                    FirebaseFirestore.instance.collection("Houses").doc(houseCodeJoinController.text).collection("Family").doc().set({
+                                                      "name": nameController.text
+                                                    });
 
-                                                  joinHouseLoading = false;
-                                                  setState((){});
-                                                  Navigator.push(context, CupertinoPageRoute(builder: (context) => Houses()));
+                                                    updateLocalList(houseCodeJoinController.text);
 
-                                                }
-                                              });
+                                                    joinHouseLoading = false;
+                                                    setState((){});
+                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => Houses()));
+
+                                                  }
+                                                });
+                                              } else {
+                                                errorMessageJoinHouse =
+                                                    "House already joined";
+                                                joinHouseLoading = false;
+                                                setState(() {});
+                                              }
+
                                             } catch (e) {
                                               errorMessageJoinHouse =
                                                   e.toString();
@@ -719,7 +745,7 @@ class _HousesState extends State<Houses> {
 
                               Container(
                                 margin: const EdgeInsets.only(top: 20, bottom: 10),
-                                child: const Text("Quick Options", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                                child: Text("Quick Options", style: GoogleFonts.poppins(textStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),),
                               ),
 
                               Row(
@@ -748,7 +774,7 @@ class _HousesState extends State<Houses> {
 
                                           Container(
                                             margin: const EdgeInsets.only(top: 5),
-                                            child: const Text("Shopping\nList", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                                            child: Text("Shopping\nList", style: GoogleFonts.poppins(textStyle: const TextStyle(color: Colors.white)), textAlign: TextAlign.center,),
                                           ),
                                         ],
                                       ),
@@ -777,7 +803,7 @@ class _HousesState extends State<Houses> {
 
                                           Container(
                                             margin: const EdgeInsets.only(top: 5),
-                                            child: const Text("Inventory\n", style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+                                            child: Text("Inventory\n", style: GoogleFonts.poppins(textStyle: const TextStyle(color: Colors.white)), textAlign: TextAlign.center,),
                                           ),
                                         ],
                                       ),
@@ -815,13 +841,13 @@ class _HousesState extends State<Houses> {
                 Container(
                   margin: EdgeInsets.only(
                       top: MediaQuery.of(context).size.height * 0.12, left: 30),
-                  child: const Text(
+                  child: Text(
                     "My Houses",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(textStyle: const TextStyle(
                         color: Colors.white,
                         fontSize: 30,
-                        fontWeight: FontWeight.bold),
-                  ),
+                        fontWeight: FontWeight.w700),
+                  )),
                 ),
 
                 Container(
@@ -978,11 +1004,11 @@ class _HouseCardState extends State<HouseCard> {
                 width: MediaQuery.of(context).size.width * 0.3,
                 child: Text(
                   widget.houseName,
-                  style: const TextStyle(
+                  style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color: Colors.white,
-                      fontSize: 25,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold),
-                ),
+                )),
               ),
 
               Container(
@@ -1022,16 +1048,16 @@ class _HouseCardState extends State<HouseCard> {
                     ),
                   ),
                   onPressed: () {
-                    //Navigator.push(context, route)
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dashboard(widget.houseCode)));
                   },
                   child: Container(
                       margin: const EdgeInsets.only(
                           left: 20, right: 20, top: 15, bottom: 15),
-                      child: const Text(
+                      child: Text(
                         "Manage House",
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      )),
+                        style: GoogleFonts.poppins(textStyle: const TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
+                      ))),
                 ),
                 Container(
                   height: 60,

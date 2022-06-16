@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // SHOW NOTIFCATIONS FOR APP
 
@@ -405,12 +406,12 @@ class _ShoppingListState extends State<ShoppingList> {
             children: [
               Container(
                 margin: const EdgeInsets.only(left: 30, top: 20),
-                child: const Text(
+                child: Text(
                   "Shopping List",
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 30),
+                      fontSize: 25)),
                 ),
               ),
 
@@ -454,13 +455,13 @@ class _ShoppingListState extends State<ShoppingList> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 20),
-                              child: const Text(
+                              child: Text(
                                 "Nothing Here",
-                                style: TextStyle(
+                                style: GoogleFonts.poppins(textStyle: TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold),
-                              ),
+                              )),
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 5),
@@ -531,14 +532,28 @@ class _ShoppingListState extends State<ShoppingList> {
                                                 color: Colors.white,
                                               ),
                                             ),
+
+                                            /*
+                                            Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(30),
+                                                  color: Colors.blue.shade700),
+                                              child: Image.network("https://logo.clearbit.com/" + document['shopName'] + ".com?color=transparent&size=80"),
+                                            ),
+
+                                             */
+                                            
                                             Container(
                                               margin: const EdgeInsets.only(left: 10),
                                               child: Text(
                                                 document['shopName'].toString(),
-                                                style: const TextStyle(
+                                                style: GoogleFonts.poppins(textStyle: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 18),
-                                              ),
+                                              )),
                                             ),
                                           ],
                                         ),
@@ -569,6 +584,11 @@ class _ShoppingListState extends State<ShoppingList> {
 
                                       ],
                                     ),
+
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+
                                     ListView.builder(
                                       shrinkWrap: true,
                                         physics: const NeverScrollableScrollPhysics(),
@@ -604,15 +624,16 @@ class _ShoppingListState extends State<ShoppingList> {
                                                           left: 20),
                                                       child: Text(
                                                         itemsForShop[index1]['itemName'].toString(),
-                                                        style: const TextStyle(
-                                                            color: Colors.white),
-                                                      ),
+                                                        style: GoogleFonts.poppins(textStyle: const TextStyle(
+                                                            color: Colors.white, fontSize: 17),
+                                                      )),
                                                     ),
                                                     Container(
                                                       child: Checkbox(
                                                         value: itemsForShop[index1]['checked'],
                                                         checkColor: Colors.white,
                                                         activeColor: Colors.blue.shade700,
+                                                        fillColor: MaterialStateColor.resolveWith((states) => Colors.blue.shade700),
                                                         onChanged: (val) {
                                                           toggleCheckItem(itemsForShop[index1].id, itemsForShop[index1]['checked']);
                                                         },
