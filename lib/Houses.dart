@@ -37,6 +37,8 @@ class _HousesState extends State<Houses> {
   var houseNameController = TextEditingController();
   var houseCodeJoinController = TextEditingController();
   var nameController = TextEditingController();
+  var houseCityController = TextEditingController();
+
 
   Future getHouses() async {
     loadingHouses = true;
@@ -324,6 +326,31 @@ class _HousesState extends State<Houses> {
                                   ),
                                 ),
 
+                                // City name
+                                Container(
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.85,
+                                  margin: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.only(top: 20),
+                                  decoration: BoxDecoration(
+                                      color:
+                                      const Color.fromRGBO(50, 50, 55, 1),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  height: 45,
+                                  child: TextField(
+                                    controller: houseCityController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        hintText: "City",
+                                        hintStyle: const TextStyle(color: Colors.grey),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                        )),
+                                  ),
+                                ),
+
                                 // Error Message
                                 Container(
                                   child: Text(
@@ -353,7 +380,7 @@ class _HousesState extends State<Houses> {
                                         // Login firebase
 
                                         await firebaseLogin().then((value) {
-                                          if (houseNameController.text != '') {
+                                          if (houseNameController.text != '' && houseCityController.text != '') {
                                             try {
                                               // Create House Function
                                               Random random = Random();
@@ -383,7 +410,8 @@ class _HousesState extends State<Houses> {
                                                       .set({
                                                     'houseCode': randomNumber,
                                                     'houseName':
-                                                        houseNameController.text
+                                                        houseNameController.text,
+                                                    'city': houseCityController.text
                                                   }).then((value) async {
                                                     // Stores the house code locally
                                                     await updateLocalList(
@@ -745,7 +773,7 @@ class _HousesState extends State<Houses> {
 
                               Container(
                                 margin: const EdgeInsets.only(top: 20, bottom: 10),
-                                child: Text("Quick Options", style: GoogleFonts.poppins(textStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),),
+                                child: Text("Applets", style: GoogleFonts.poppins(textStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),),
                               ),
 
                               Row(
@@ -843,11 +871,11 @@ class _HousesState extends State<Houses> {
                       top: MediaQuery.of(context).size.height * 0.12, left: 30),
                   child: Text(
                     "My Houses",
-                    style: GoogleFonts.poppins(textStyle: const TextStyle(
+                    style: GoogleFonts.poppins(
                         color: Colors.white,
-                        fontSize: 30,
+                        fontSize: 27,
                         fontWeight: FontWeight.w700),
-                  )),
+                  ),
                 ),
 
                 Container(
@@ -892,8 +920,9 @@ class _HousesState extends State<Houses> {
                                   print(data);
                                   var houseName = data['houseName'];
                                   var houseCode = data['houseCode'];
+                                  var houseCity = data['city'];
 
-                                  return HouseCard(houseName, houseCode);
+                                  return HouseCard(houseName, houseCode, houseCity);
                                 },
                               ),
                             ))
@@ -967,10 +996,12 @@ class _HousesState extends State<Houses> {
 class HouseCard extends StatefulWidget {
   var houseName = 'Mountain House';
   var houseCode = '';
+  var houseCity = '';
 
-  HouseCard(house, code) {
+  HouseCard(house, code, city) {
     houseName = house;
     houseCode = code.toString();
+    houseCity = city;
   }
 
   @override
@@ -979,6 +1010,26 @@ class HouseCard extends StatefulWidget {
 
 //https://dribbble.com/shots/18300406-Affitto-Real-Estate-App
 class _HouseCardState extends State<HouseCard> {
+
+  var bgImageList = ["house_1.jpeg", "house_2.webp", "house_3.jpg", "house_4.jpg", "house_5.jpg", "house_7.jpg", "house_8.jpg", "house_9.webp", "house_10.jpg"];
+  var selectedImg = "house_1.jpeg";
+
+  Future generateRandomBackground() async {
+    Random random = Random();
+    var randomNumber = random
+        .nextInt(bgImageList.length);
+    selectedImg = bgImageList[randomNumber];
+    setState((){});
+    print(randomNumber);
+  }
+
+  @override
+  void initState(){
+    generateRandomBackground();
+    print("INIT STATE");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -987,8 +1038,8 @@ class _HouseCardState extends State<HouseCard> {
       margin: const EdgeInsets.only(top: 20),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
-          image: const DecorationImage(
-              fit: BoxFit.cover, image: AssetImage("lib/images/house_4.jpg")),
+          image: DecorationImage(
+              fit: BoxFit.cover, image: AssetImage("lib/images/" + selectedImg)),
           color: Colors.white),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -997,24 +1048,58 @@ class _HouseCardState extends State<HouseCard> {
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Container(
-                margin: const EdgeInsets.only(top: 30, left: 30),
-                width: MediaQuery.of(context).size.width * 0.3,
-                child: Text(
-                  widget.houseName,
-                  style: GoogleFonts.poppins(textStyle: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                )),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Container(
+                    margin: const EdgeInsets.only(top: 30, left: 30),
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      widget.houseName,
+                      style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(top: 0, left: 30),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(5)
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(CupertinoIcons.location_solid, color: Colors.white,),
+
+                        const SizedBox(
+                          width: 5,
+                        ),
+
+                        Text(
+                          widget.houseCity,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
 
               Container(
                 height: 60,
                 width: 60,
-                margin: const EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10, top: 20),
                 child: FlatButton(
                   color: Colors.white.withOpacity(0.3),
                   shape: RoundedRectangleBorder(
@@ -1048,16 +1133,16 @@ class _HouseCardState extends State<HouseCard> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dashboard(widget.houseCode)));
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dashboard(widget.houseCode, widget.houseCity)));
                   },
                   child: Container(
                       margin: const EdgeInsets.only(
-                          left: 20, right: 20, top: 15, bottom: 15),
+                          left: 15, right: 15, top: 13, bottom: 13),
                       child: Text(
                         "Manage House",
-                        style: GoogleFonts.poppins(textStyle: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
-                      ))),
+                        style: GoogleFonts.poppins(
+                            color: Colors.black, fontWeight: FontWeight.w600, fontSize: 13),
+                      )),
                 ),
                 Container(
                   height: 60,

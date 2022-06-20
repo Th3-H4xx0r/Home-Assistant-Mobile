@@ -42,10 +42,18 @@ dependencies:
   firebase_auth: ^3.3.19
   awesome_dialog: ^2.2.1
   google_fonts: ^3.0.1
+  weather: ^2.0.1
+
 
 dev_dependencies:
+  icons_launcher: ^1.2.1
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  image_path: 'lib/images/home_assistant_app_icon.png'
+  ios: true
+  android: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -80,6 +88,8 @@ flutter:
     - lib/images/house_8.jpg
     - lib/images/house_9.webp
     - lib/images/house_10.jpg
+    - lib/images/people.svg
+    - lib/images/home_sync_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

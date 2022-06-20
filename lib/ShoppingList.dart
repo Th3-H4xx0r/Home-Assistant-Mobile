@@ -6,7 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// SHOW NOTIFCATIONS FOR APP
+// SHOW NOTIFICATIONS FOR APP
 
 class ShoppingList extends StatefulWidget {
   var houseCode = '';
@@ -105,7 +105,7 @@ class _ShoppingListState extends State<ShoppingList> {
                               ),
 
                               // Error Message
-                              Container(
+                              SizedBox(
                                 child: Text(
                                   errorMessageCreateShop,
                                   style: const TextStyle(color: Colors.red),
@@ -262,7 +262,7 @@ class _ShoppingListState extends State<ShoppingList> {
                               ),
 
                               // Error Message
-                              Container(
+                              SizedBox(
                                 child: Text(
                                   errorMessageCreateItem,
                                   style: const TextStyle(color: Colors.red),
@@ -361,15 +361,14 @@ class _ShoppingListState extends State<ShoppingList> {
             .collection("Shopping List").where('shopName', isEqualTo: shop)
             .get()
             .then((value) {
-          value.docs.forEach((element) {
+          for (var element in value.docs) {
             FirebaseFirestore.instance.collection("Houses").doc(
                 widget.houseCode).collection("Shopping List")
                 .doc(element.id)
                 .delete();
-          });
+          }
         });
       }
-        //FirebaseFirestore.instance.collection("Houses").doc(widget.houseCode).collection("Shopping List").where("shopName", isEqualTo: shop)
     ).show();
   }
 
@@ -427,7 +426,7 @@ class _ShoppingListState extends State<ShoppingList> {
             ],
           ),
 
-          Container(
+          SizedBox(
               height: MediaQuery.of(context).size.height * 0.8,
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
@@ -437,8 +436,6 @@ class _ShoppingListState extends State<ShoppingList> {
                     .snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   var data = snapshot.data?.docs ?? [];
-                  print(data);
-
                   if (data.isEmpty) {
                     return Container(
                       margin: EdgeInsets.only(
@@ -446,7 +443,7 @@ class _ShoppingListState extends State<ShoppingList> {
                       child: Center(
                         child: Column(
                           children: [
-                            Container(
+                            SizedBox(
                               width: MediaQuery.of(context).size.width * 0.5,
                               child: AspectRatio(
                                   aspectRatio: 1.5,
@@ -457,7 +454,7 @@ class _ShoppingListState extends State<ShoppingList> {
                               margin: const EdgeInsets.only(top: 20),
                               child: Text(
                                 "Nothing Here",
-                                style: GoogleFonts.poppins(textStyle: TextStyle(
+                                style: GoogleFonts.poppins(textStyle: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold),
@@ -543,7 +540,6 @@ class _ShoppingListState extends State<ShoppingList> {
                                                   color: Colors.blue.shade700),
                                               child: Image.network("https://logo.clearbit.com/" + document['shopName'] + ".com?color=transparent&size=80"),
                                             ),
-
                                              */
                                             
                                             Container(
@@ -561,7 +557,7 @@ class _ShoppingListState extends State<ShoppingList> {
                                         Row(
                                           children: [
 
-                                            Container(
+                                            SizedBox(
                                               child: IconButton(
                                                 onPressed: (){
                                                   showDeleteShopConfirmation(document['shopName']);
@@ -570,7 +566,7 @@ class _ShoppingListState extends State<ShoppingList> {
                                               ),
                                             ),
 
-                                            Container(
+                                            SizedBox(
                                               child: IconButton(
                                                 onPressed: (){
                                                   showAddItemBottomSheet(document['shopName']);
@@ -628,7 +624,7 @@ class _ShoppingListState extends State<ShoppingList> {
                                                             color: Colors.white, fontSize: 17),
                                                       )),
                                                     ),
-                                                    Container(
+                                                    SizedBox(
                                                       child: Checkbox(
                                                         value: itemsForShop[index1]['checked'],
                                                         checkColor: Colors.white,
@@ -647,7 +643,7 @@ class _ShoppingListState extends State<ShoppingList> {
                                   ],
                                 ));
                           } else {
-                            return Text("NONE");
+                            return const Text("NONE");
                           }
                         });
                   }
